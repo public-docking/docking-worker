@@ -22,7 +22,8 @@ describe "launch section", ()->
       
       # explicit
       exhaustiveness: 1 # for test only, less cpu usage, worse results
-      clean_up      : false # for debug
+      # clean_up      : false # for debug
+      clean_up      : true
     }
     await launch opt, defer(err, res); return on_end err if err
     
@@ -30,5 +31,7 @@ describe "launch section", ()->
     assert.strictEqual res.res_stdout.toString(), fs.readFileSync "./test/test_files/stdout", "utf-8"
     assert.strictEqual res.res_log.toString(),    fs.readFileSync "./test/test_files/log.txt", "utf-8"
     assert.strictEqual res.result.toString(),     fs.readFileSync "./test/test_files/all.pdbqt", "utf-8"
+    
+    assert !fs.existsSync "./job/deadbeef"
     
     on_end()

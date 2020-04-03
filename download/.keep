@@ -3,4 +3,3 @@ coverage
 
 autodock_vina
 job
-download/*.pdbqt

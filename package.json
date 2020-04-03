@@ -18,7 +18,8 @@
   },
   "homepage": "https://github.com/public-docking/docking-worker#readme",
   "dependencies": {
-    "fy": "github:hu2prod/fy"
+    "fy": "github:hu2prod/fy",
+    "ws_wrap": "github:hu2prod/ws_wrap"
   },
   "devDependencies": {
     "iced-coffee-coverage": "^1.0.21",
