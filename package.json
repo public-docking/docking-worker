@@ -1,0 +1,29 @@
+{
+  "name": "docking-worker",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha --recursive --compilers coffee:iced-coffee-script/register --require iced-coffee-coverage/register-istanbul test && istanbul report"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/public-docking/docking-worker.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/public-docking/docking-worker/issues"
+  },
+  "homepage": "https://github.com/public-docking/docking-worker#readme",
+  "dependencies": {
+    "fy": "github:hu2prod/fy"
+  },
+  "devDependencies": {
+    "iced-coffee-coverage": "^1.0.21",
+    "iced-coffee-script": "^108.0.14",
+    "istanbul": "^0.4.5",
+    "mocha": "^3.2.0"
+  }
+}
