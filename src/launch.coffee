@@ -1,7 +1,13 @@
+module = @
 require "fy"
 {exec} = require "child_process"
 config = require "./config"
 fs = require "fs"
+
+# TODO config?
+@default_param =
+  exhaustiveness  : 10
+  num_modes       : 10
 
 check_file = (t)->
   fs.existsSync t
@@ -9,7 +15,7 @@ check_file = (t)->
 check_hex = (t)->
   /^[0-9a-f]+$/.test t
 
-check_number = (t)->
+@check_number = check_number = (t)->
   /^-?(\d+)(.\d+)?$/.test t
 
 ###
@@ -31,6 +37,7 @@ TODO support for https://github.com/QVina/qvina
     size_z
     
     exhaustiveness
+    num_modes
     seed
     clean_up
   } = opt
@@ -49,8 +56,11 @@ TODO support for https://github.com/QVina/qvina
   return cb new Error "bad size_y #{size_y}"                  if !check_number size_y
   return cb new Error "bad size_z #{size_z}"                  if !check_number size_z
   
-  exhaustiveness ?= 8
+  exhaustiveness ?= module.default_param.exhaustiveness
   return cb new Error "bad exhaustiveness #{exhaustiveness}"  if !check_number exhaustiveness
+  
+  num_modes ?= module.default_param.num_modes
+  return cb new Error "bad num_modes #{num_modes}"            if !check_number num_modes
   
   seed ?= 1
   return cb new Error "bad seed #{seed}"                      if !check_number seed
@@ -83,6 +93,7 @@ TODO support for https://github.com/QVina/qvina
     size_z = #{size_z}
     
     exhaustiveness = #{exhaustiveness}
+    num_modes = #{num_modes}
     
     """
   

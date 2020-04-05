@@ -2,11 +2,25 @@
 module = @
 require "fy"
 fs        = require "fs"
-{exec}    = require "child_process"
+os        = require "os"
+{
+  exec
+  execSync
+}    = require "child_process"
 Websocket_wrap = require "ws_wrap"
 config    = require "./config"
-{launch}  = require "./launch"
+{
+  launch
+  check_number
+  default_param
+}  = require "./launch"
 Ws_request_service  = require "./ws_request_service"
+
+free_slot = os.cpus().length
+
+
+execSync "mkdir -p #{config.path_to_download}"
+execSync "mkdir -p #{config.path_to_job}"
 # ###################################################################################################
 
 download_map = new Map
@@ -47,9 +61,25 @@ docking_job = (data)->
     ws.write {
       switch      : data.switch
       request_uid : data.request_uid
-      data        : "download error"
+      task_id     : data.task_id
+      error       : "download error"
+      free_slot
     }
     return
+  
+  if check_number data.exhaustiveness
+    slot_size = +data.exhaustiveness
+  else
+    slot_size = +default_param.exhaustiveness
+  
+  free_slot -= slot_size
+  
+  ws.write {
+    switch      : data.switch
+    request_uid : data.request_uid
+    free_slot
+  }
+  
   
   opt = {
     task_id       : data.task_id
@@ -67,17 +97,26 @@ docking_job = (data)->
     exhaustiveness: data.exhaustiveness
   }
   await launch opt, defer(err, res)
+  puts "launch done"
   
+  free_slot += slot_size
+  puts "free_slot", free_slot
   if err
     perr err
     ws.write {
       switch      : "docking_job_submit"
       request_uid : data.request_uid
+      task_id     : data.task_id
+      free_slot
       error       : "some error"
     }
+    return
+  
   ws.write {
     switch      : "docking_job_submit"
     request_uid : data.request_uid
+    task_id     : data.task_id
+    free_slot
     
     res_stderr  : res.res_stderr.toString()
     res_stdout  : res.res_stdout.toString()
@@ -99,7 +138,10 @@ docking_job = (data)->
   
   do ()->
     while !ws._need_close
-      ws.write switch : "ping"
+      ws.write {
+        switch : "ping"
+        free_slot
+      }
       await setTimeout defer(), 1000
   
 # 
